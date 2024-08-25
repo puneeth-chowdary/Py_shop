@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecom - Product Cards with PayPal Integration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation Bar Styles */
+        nav {
+            background-color: #007bff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.5em;
+            color: white;
+            font-weight: bold;
+        }
+
+        nav .logo a {
+            text-decoration: none;
+            color: white;
+        }
+
+        nav .search-bar {
+            display: flex;
+            align-items: center;
+        }
+
+        nav input[type="text"] {
+            padding: 5px 10px;
+            font-size: 1em;
+            border-radius: 5px 0 0 5px;
+            border: none;
+            outline: none;
+        }
+
+        nav button {
+            padding: 5px 10px;
+            font-size: 1em;
+            border-radius: 0 5px 5px 0;
+            border: none;
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background-color: #004494;
+        }
+
+        .cart-icon-container {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .cart-icon {
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-icon:hover {
+            background-color: #004494;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        /* PayPal Integration Styles */
+        .paypal-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .paypal-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+    </style>
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=Acj5Ia8rFG6xo_lJQQ4F1n1VR11_ok06tvTglPVKDkLp68KuDof1hkznIZTE1nJAUiHmRPSzlESJ1J66&currency=USD"></script>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">
+            <!-- Logo with link to the home page -->
+            <a href="{% url 'index' %}">Ecom</a>
+        </div>
+        <div class="search-bar">
+            <form method="POST" action="{% url 'search' %}">
+                {% csrf_token %}
+                <input type="text" name="search_name" placeholder="Search products...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div class="cart-icon-container">
+            <!-- Cart Icon with Item Count -->
+            <a href="{% url 'cart' %}" class="cart-icon">
+                Cart
+                <span class="cart-count">{{ cart_item_count }}</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- PayPal Integration Section -->
+    <div class="paypal-container">
+        <h2>Complete Your Payment</h2>
+
+        <!-- Display Number of Items and Total Price -->
+        <div class="info-row">
+            <strong>Number of Items:</strong> {{ count }}
+        </div>
+        <div class="info-row">
+            <strong>Total Price:</strong> ${{ price }}
+        </div>
+
+        <div id="paypal-button-container"></div>
+    </div>
+
+    <!-- PayPal Integration Script -->
+    <script>
+        paypal.Buttons({
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '{{price }}' // The total price from Django context
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Transaction completed by ' + details.payer.name.given_name + '!');
+                    // Optionally, you can handle redirection or any other action after a successful payment here
+                });
+            }
+        }).render('#paypal-button-container'); // Renders the PayPal button in the specified container
+    </script>
+
+</body>
+
+</html>
+
+
+    

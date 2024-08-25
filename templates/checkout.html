@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #007bff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.5em;
+            color: white;
+            font-weight: bold;
+        }
+
+        nav .logo a {
+            text-decoration: none;
+            color: white;
+        }
+
+        nav .search-bar {
+            display: flex;
+            align-items: center;
+        }
+
+        nav input[type="text"] {
+            padding: 5px 10px;
+            font-size: 1em;
+            border-radius: 5px 0 0 5px;
+            border: none;
+            outline: none;
+        }
+
+        nav button {
+            padding: 5px 10px;
+            font-size: 1em;
+            border-radius: 0 5px 5px 0;
+            border: none;
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background-color: #004494;
+        }
+
+        .cart-icon-container {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .cart-icon {
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-icon:hover {
+            background-color: #004494;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .form-container {
+            margin: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container input[type="tel"],
+        .form-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">
+            <!-- Logo with link to the home page -->
+            <a href="{% url 'index' %}">Ecom</a>
+        </div>
+        <div class="search-bar">
+            <form method="POST" action="{% url 'search' %}">
+                {% csrf_token %}
+                <input type="text" name="search_name" placeholder="Search products...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div class="cart-icon-container">
+            <!-- Cart Icon with Item Count -->
+            <a href="{% url 'cart' %}" class="cart-icon">
+                Cart
+                <span class="cart-count">{{ cart_item_count }}</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Input Form -->
+    <div class="form-container">
+        <h2>Enter Your Details</h2>
+        <form method="POST" action="{% url 'checky' %}">
+            {% csrf_token %}
+            {{ check_form.as_p}}
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+</body>
+
+</html>
+
+

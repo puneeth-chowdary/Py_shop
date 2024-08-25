@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Cards</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: #007bff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.5em;
+            color: white;
+            font-weight: bold;
+        }
+
+        nav .search-bar {
+            display: flex;
+            align-items: center;
+        }
+
+        nav input[type="text"] {
+            padding: 5px 10px;
+            font-size: 1em;
+            border-radius: 5px 0 0 5px;
+            border: none;
+            outline: none;
+        }
+
+        nav button {
+            padding: 5px 10px;
+            font-size: 1em;
+            border-radius: 0 5px 5px 0;
+            border: none;
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background-color: #004494;
+        }
+
+        .cart-icon-container {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .cart-icon {
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-icon:hover {
+            background-color: #004494;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .card-price {
+            font-size: 1.1em;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 0.9em;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .card-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+        .card-button:hover {
+            background-color: #0056b3;
+        }
+
+        .remove-button {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+        .remove-button:hover {
+            background-color: #c82333;
+        }
+
+        /* Checkout Button */
+        .checkout-button-container {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
+        }
+
+        .checkout-button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .checkout-button:hover {
+            background-color: #218838;
+        }
+
+        .item-count {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">
+            <!-- Wrap the logo text in a link that redirects to the home page -->
+            <a href="{% url 'index' %}" style="text-decoration: none; color: white; font-weight: bold;">
+                Ecom
+            </a>
+        </div>
+        <div class="search-bar">
+            <form method="POST" action="{% url 'search' %}">
+                {% csrf_token %}
+                <input type="text" name="search_name" placeholder="Search products...">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div class="cart-icon-container">
+            <!-- Cart Icon with Item Count -->
+            <a href="{% url 'cart' %}" class="cart-icon">
+                Cart
+                <span class="cart-count">{{ cart_item_count }}</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Product Cards -->
+    <div class="card-container">
+        {% for pro in cart_items %}
+        <a href="{% url 'product_detail' pro.id %}" style="text-decoration: none; color: inherit;">
+            <div class="card">
+                <img src="{{ pro.image_url }}" alt="{{ pro.name }}">
+                <div class="card-body">
+                    <h3 class="card-title">{{ pro.name }}</h3>
+                    <p class="card-price">${{ pro.price }}</p>
+                    <p class="card-description">{{ pro.description }}</p>
+                    <form method="POST" action="{% url 'remove' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="name" value="{{ pro.name }}">
+                        <button class="remove-button" type="submit">Remove from Cart</button>
+                    </form>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Item Count -->
+    <div class="item-count">
+        <h1>Total Items: {{count }}</h1>
+    </div>
+
+    <!-- Checkout Button -->
+    <div class="checkout-button-container">
+        <a href="http://127.0.0.1:8000/products/checky" style="text-decoration: none;">
+            <button class="checkout-button">Proceed to Checkout</button>
+        </a>
+    </div>
+
+</body>
+
+</html
+
+
+
+
